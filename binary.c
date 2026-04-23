@@ -1,86 +1,50 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-struct Item {
-    int value;
-    int index;
-};
+#define MAX 20
 
-void sort(struct Item arr[], int n) {
-    int i, j;
-    struct Item temp;
+// Function to perform BFS
+void BFS(int adj[MAX][MAX], int visited[MAX], int n, int start) {
+    int queue[MAX], front = 0, rear = 0;
 
-    for(i = 0; i < n-1; i++) {
-        for(j = i+1; j < n; j++) {
-            if(arr[i].value > arr[j].value) {
-                temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
+    // Start node setup
+    visited[start] = 1;
+    queue[rear++] = start;
+
+    printf("BFS Traversal: ");
+
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
+
+        // Check all neighbors of the current vertex
+        for (int i = 0; i < n; i++) {
+            if (adj[current][i] == 1 && !visited[i]) {
+                visited[i] = 1;
+                queue[rear++] = i;
             }
         }
     }
-}
-
-// Binary search (returns one occurrence)
-int binarysearch(struct Item arr[], int n, int x) {
-    int l = 0, r = n - 1, mid;
-
-    while(l <= r) {
-        mid = (l + r) / 2;
-
-        if(arr[mid].value == x)
-            return mid;
-        else if(x > arr[mid].value)
-            l = mid + 1;
-        else
-            r = mid - 1;
-    }
-    return -1;
+    printf("\n");
 }
 
 int main() {
-    int n, i, x, pos;
-    struct Item arr[100];
+    int n, start, adj[MAX][MAX], visited[MAX] = {0};
 
-    printf("Enter number of elements: ");
+    printf("Enter number of vertices: ");
     scanf("%d", &n);
 
-    printf("Enter elements:\n");
-    for(i = 0; i < n; i++) {
-        scanf("%d", &arr[i].value);
-        arr[i].index = i; // store original index
-    }
-
-    // Sort
-    sort(arr, n);
-
-    printf("\nEnter searching element: ");
-    scanf("%d", &x);
-
-    // Present the sorted array after input
-    printf("\nSorted array:\n");
-    for(i = 0; i < n; i++) {
-        printf("%d ", arr[i].value);
-    }
-
-    // Binary Search
-    pos = binarysearch(arr, n, x);
-
-    if(pos == -1) {
-        printf("Element not found\n");
-    } else {
-        printf("\nOriginal indices: ");
-
-        int j = pos;
-        while(j >= 0 && arr[j].value == x)
-            j--;
-
-        j++;
-
-        while(j < n && arr[j].value == x) {
-            printf("%d ", arr[j].index);
-            j++;
+    printf("Enter adjacency matrix (0 or 1):\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &adj[i][j]);
         }
     }
+
+    printf("Enter starting vertex (0 to %d): ", n - 1);
+    scanf("%d", &start);
+
+    BFS(adj, visited, n, start);
 
     return 0;
 }
